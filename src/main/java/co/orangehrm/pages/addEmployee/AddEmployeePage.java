@@ -20,10 +20,28 @@ public class AddEmployeePage extends PageObject {
     public void enterToAddEmployeeForm(){
         actions.clickElement(AddEmployeUI.ADD_EMPLOYEE_BUTTON, "Botón Add");
     }
+
     public void registerFullNameEmployee(String firstName, String lastName) {
         assertThat("Validando texto Employee Full Name", actions.isElementVisible(AddEmployeUI.EMPLOYEE_FULL_NAME_LBL,"texto Employee Full Name"), equalTo(true));
         actions.enterText(AddEmployeUI.FIRST_NAME_FIELD, "Campo First Name", firstName);
         actions.enterText(AddEmployeUI.LAST_NAME_FIELD, "Campo Last Name", lastName);
+    }
+
+    public void incrementAndEnterEmployeeId() {
+        String currentId = actions.getElementAttribute(AddEmployeUI.EMPLOYEE_ID, "value", "Campo Employee ID");
+        if (currentId != null && !currentId.trim().isEmpty()) {
+            try {
+                int nextIdInt = Integer.parseInt(currentId) + 1;
+                String nextIdStr = String.format("%0" + currentId.length() + "d", nextIdInt);
+                actions.clearElementForce(AddEmployeUI.EMPLOYEE_ID, "Campo Employee ID");
+                actions.enterText(AddEmployeUI.EMPLOYEE_ID, "Campo Employee ID", nextIdStr);
+
+            } catch (NumberFormatException e) {
+                System.err.println("Error: El valor '" + currentId + "' no es un número válido.");
+            }
+        } else {
+            System.err.println("Error: No se pudo obtener el ID actual o está vacío.");
+        }
     }
 
     public boolean uploadProfilePicture() {
@@ -37,15 +55,10 @@ public class AddEmployeePage extends PageObject {
         assertThat("Validando texto Success", actions.isElementVisible(AddEmployeUI.SUCCESS_ADD_EMPLOYEE_TXT,"texto Success"), equalTo(true));
     }
 
-    public void validateRegisterEmployee(String firstName, String lastName) {
-        assertThat("Validando texto Full Name", actions.isElementVisible(AddEmployeUI.EMPLOYEE_FULL_NAME_LBL,"texto Full name employee"), equalTo(true));
-        assertThat("Validando que el texto del campo contenga el First Name", actions.getElementText(AddEmployeUI.FIRST_NAME_FIELD, "Campo First Name"), containsString(firstName));
-        assertThat("Validando que el texto del campo contenga el Last Name", actions.getElementText(AddEmployeUI.LAST_NAME_FIELD, "Campo Last Name"), containsString(lastName));
-    }
-
     public void registerEmployee(String firstName, String lastName) {
         enterToAddEmployeeForm();
         registerFullNameEmployee(firstName, lastName);
+        incrementAndEnterEmployeeId();
         uploadProfilePicture();
         saveEmployee();
     }

@@ -116,4 +116,30 @@ public class WebActions extends PageObject {
         }
     }
 
+    public String getElementAttribute(By by, String attributeName, String elementName) {
+        WebElement element = waitForElementPresent(by, elementName, DEFAULT_WAIT_TIME);
+        if (element != null) {
+            String value = element.getAttribute(attributeName);
+            TEST_LOGS.writeLog("Obteniendo atributo '" + attributeName + "' de " + elementName + ": " + value);
+            return value;
+        }
+        return "";
+    }
+
+    public boolean clearElementForce(By by, String elementName) {
+        WebElement element = waitForElement(by, elementName, DEFAULT_WAIT_TIME);
+        if (element != null) {
+            try {
+                TEST_LOGS.writeLog("Limpiando forzosamente el campo: " + elementName);
+                element.sendKeys(Keys.CONTROL + "a");
+                element.sendKeys(Keys.BACK_SPACE);
+                return true;
+            } catch (Exception e) {
+                TEST_LOGS.writeLog("ERROR al intentar limpiar forzosamente '" + elementName + "': " + e.getMessage());
+                return false;
+            }
+        }
+        return false;
+    }
+
 }
