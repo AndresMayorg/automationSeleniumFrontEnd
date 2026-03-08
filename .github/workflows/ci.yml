@@ -8,9 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-
   run_serenity_tests:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -24,15 +22,19 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Run Serenity BDD Tests and Generate Reports
-        run: mvn clean verify
+      - name: Run Serenity BDD Tests (UI & API)
+        run: |
+          mvn clean verify \
+          -Denvironment=browserstack \
+          -Dbrowserstack.user=${{ secrets.BROWSERSTACK_USER }} \
+          -Dbrowserstack.key=${{ secrets.BROWSERSTACK_KEY }}
 
       - name: Upload Serenity Reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: serenity-reports
           path: target/site/serenity/
-
 
       - name: Upload Test Results (JUnit XML)
         if: always()
