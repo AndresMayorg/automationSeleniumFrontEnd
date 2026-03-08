@@ -36,6 +36,9 @@ La siguiente representación en árbol detalla la organización de los component
 
 ```text
 .
+├── .github/
+│   └── workflows/
+│       └── ci.yml       # Definición del Pipeline de CI/CD
 ├── src/
 │   ├── main/
 │   │   ├── java/
@@ -86,6 +89,31 @@ mvn clean verify -Denvironment=browserstack
    Para ejecutar solo un escenario o funcionalidad específica:
 
 mvn clean verify -Dcucumber.filter.tags="@SuccessfulEmployeeCreation"
+
+## Integración Continua (CI/CD)
+
+Este repositorio cuenta con un pipeline de automatización implementado en GitHub Actions, diseñado para ejecutar la suite de pruebas de UI de forma autónoma en cada integración de código.
+
+Flujo del Pipeline (.github/workflows/serenity-ci.yml)
+El flujo está optimizado para garantizar la calidad en cada push o pull_request a la rama main:
+
+1. **Entorno Virtual:** Ejecución sobre contenedores ubuntu-latest.
+
+2. **Gestión de JDK:** Configuración automatizada de Java 21 (Temurin) con caché de Maven para optimizar tiempos.
+
+3. **Inyección de Secretos:** Uso de GitHub Secrets para manejar de forma segura las credenciales de infraestructura (BROWSERSTACK_USER y BROWSERSTACK_KEY).
+
+4. **Ejecución E2E:** Disparo del comando mvn clean verify serenity:aggregate apuntando al entorno de BrowserStack.
+
+5. **Persistencia de Evidencias:** Carga automática de los reportes HTML de Serenity y resultados XML como Artifacts de la ejecución.
+
+**Configuración de Seguridad**
+
+Para la correcta ejecución del pipeline en un entorno productivo, se han configurado las siguientes variables de entorno en el repositorio:
+
+BROWSERSTACK_USER: Usuario de la cuenta de infraestructura.
+
+BROWSERSTACK_KEY: Access Key para la conexión remota
 
 ## Reportes y Evidencia
 
