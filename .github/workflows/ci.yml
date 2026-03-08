@@ -26,8 +26,8 @@ jobs:
         run: |
           mvn clean verify \
           -Denvironment=browserstack \
-          -Dbrowserstack.user=${{ secrets.BROWSERSTACK_USER }} \
-          -Dbrowserstack.key=${{ secrets.BROWSERSTACK_KEY }}
+          -DBROWSERSTACK_USER=${{ secrets.BROWSERSTACK_USER }} \
+          -DBROWSERSTACK_KEY=${{ secrets.BROWSERSTACK_KEY }}
 
       - name: Upload Serenity Reports
         if: always()
